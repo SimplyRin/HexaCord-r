@@ -12,6 +12,7 @@ import com.mojang.brigadier.context.StringRange;
 import com.mojang.brigadier.suggestion.Suggestion;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.tree.CommandNode;
+import com.mojang.brigadier.tree.RootCommandNode;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.buffer.Unpooled;
@@ -36,6 +37,7 @@ import net.md_5.bungee.api.event.PluginMessageEvent;
 import net.md_5.bungee.api.event.ServerConnectEvent;
 import net.md_5.bungee.api.event.ServerDisconnectEvent;
 import net.md_5.bungee.api.event.ServerKickEvent;
+import net.md_5.bungee.api.event.TabCommandsEvent;
 import net.md_5.bungee.api.event.TabCompleteResponseEvent;
 import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.score.Objective;
@@ -730,6 +732,14 @@ public class DownstreamBridge extends PacketHandler
 
                 modified = true;
             }
+        }
+
+        TabCommandsEvent event = new TabCommandsEvent( con, commands );
+        if ( bungee.getPluginManager().callEvent( event ).isCancelled() )
+        {
+            commands.setRoot( new RootCommandNode<>() );
+
+            modified = true;
         }
 
         if ( modified )
