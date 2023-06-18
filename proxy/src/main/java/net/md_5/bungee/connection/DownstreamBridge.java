@@ -32,6 +32,7 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.connection.Server;
+import net.md_5.bungee.api.event.BrandSendEvent;
 import net.md_5.bungee.api.event.PluginMessageEvent;
 import net.md_5.bungee.api.event.ServerConnectEvent;
 import net.md_5.bungee.api.event.ServerDisconnectEvent;
@@ -298,7 +299,22 @@ public class DownstreamBridge extends PacketHandler
                 Preconditions.checkState( !serverBrand.contains( bungee.getName() ), "Cannot connect proxy to itself!" );
 
                 brand = ByteBufAllocator.DEFAULT.heapBuffer();
-                DefinedPacket.writeString( bungee.getName() + " (" + bungee.getVersion() + ")" + " <- " + serverBrand, brand );
+
+                String bungeeBrand = bungee.getName() + " (" + bungee.getVersion() + ")";
+                String bukkitBrand = serverBrand;
+                String defaultBrand = bungeeBrand + " <- " + bukkitBrand;
+
+                BrandSendEvent brandSendEvent = new BrandSendEvent( con, false, defaultBrand, bungeeBrand, bukkitBrand );
+                BrandSendEvent ret = bungee.getPluginManager().callEvent( brandSendEvent );
+
+                if ( ret.isOverwrite() )
+                {
+                    DefinedPacket.writeString( ret.getBrand(), brand );
+                } else
+                {
+                    DefinedPacket.writeString( defaultBrand, brand );
+                }
+
                 pluginMessage.setData( DefinedPacket.readArray( brand ) );
                 brand.release();
             } else
@@ -307,7 +323,20 @@ public class DownstreamBridge extends PacketHandler
 
                 Preconditions.checkState( !serverBrand.contains( bungee.getName() ), "Cannot connect proxy to itself!" );
 
-                pluginMessage.setData( ( bungee.getName() + " (" + bungee.getVersion() + ")" + " <- " + serverBrand ).getBytes( "UTF-8" ) );
+                String bungeeBrand = bungee.getName() + " (" + bungee.getVersion() + ")";
+                String bukkitBrand = serverBrand;
+                String defaultBrand = bungeeBrand + " <- " + bukkitBrand;
+
+                BrandSendEvent brandSendEvent = new BrandSendEvent( con, false, defaultBrand, bungeeBrand, bukkitBrand );
+                BrandSendEvent ret = bungee.getPluginManager().callEvent( brandSendEvent );
+
+                if ( ret.isOverwrite() )
+                {
+                    pluginMessage.setData( ( ret.getBrand() ).getBytes( "UTF-8" ) );
+                } else
+                {
+                    pluginMessage.setData( ( bungee.getName() + " (" + bungee.getVersion() + ")" + " <- " + serverBrand ).getBytes( "UTF-8" ) );
+                }
             }
             // changes in the packet are ignored so we need to send it manually
             con.unsafe().sendPacket( pluginMessage );
