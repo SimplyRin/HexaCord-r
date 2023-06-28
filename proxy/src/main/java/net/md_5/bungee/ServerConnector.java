@@ -294,12 +294,10 @@ public class ServerConnector extends PacketHandler
                 } else
                 {
                     ByteBuf brand = ByteBufAllocator.DEFAULT.heapBuffer();
-                    
-                    String bungeeBrand = bungee.getName() + " (" + bungee.getVersion() + ")";
-                    String bukkitBrand = serverBrand;
-                    String defaultBrand = bungeeBrand + " <- " + bukkitBrand;
 
-                    BrandSendEvent brandSendEvent = new BrandSendEvent( con, false, defaultBrand, bungeeBrand, bukkitBrand );
+                    String serverBungee = bungee.getName() + " (" + bungee.getVersion() + ")";
+
+                    BrandSendEvent brandSendEvent = new BrandSendEvent( user, false, serverBungee, serverBungee, null );
                     BrandSendEvent ret = bungee.getPluginManager().callEvent( brandSendEvent );
 
                     if ( ret.isOverwrite() )
@@ -307,12 +305,11 @@ public class ServerConnector extends PacketHandler
                         DefinedPacket.writeString( ret.getBrand(), brand );
                     } else
                     {
-                        DefinedPacket.writeString( defaultBrand, brand );
+                        DefinedPacket.writeString( serverBungee, brand );
                     }
 
                     user.unsafe().sendPacket( new PluginMessage( user.getPendingConnection().getVersion() >= ProtocolConstants.MINECRAFT_1_13 ? "minecraft:brand" : "MC|Brand", DefinedPacket.toArray( brand ), handshakeHandler.isServerForge() ) );
 
-                    
                     brand.release();
                 }
             }
