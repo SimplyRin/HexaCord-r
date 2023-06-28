@@ -29,7 +29,7 @@ public class CommandBungee extends Command
     @Override
     public void execute(CommandSender sender, String[] args)
     {
-        TextComponent bungee = new TextComponent( ChatColor.BLUE + "This server is running HexaCord version " + ProxyServer.getInstance().getVersion() + " by md_5" );
+        TextComponent bungee = new TextComponent( ChatColor.BLUE + "This server is running HexaCord-r version " + ProxyServer.getInstance().getVersion() + " by md_5" );
         bungee.setHoverEvent( new HoverEvent( HoverEvent.Action.SHOW_TEXT, new Text( "Click to copy to clipboard" ) ) );
         bungee.setClickEvent( new ClickEvent( ClickEvent.Action.COPY_TO_CLIPBOARD, ChatColor.stripColor( bungee.getText() ) ) );
 
@@ -59,7 +59,7 @@ public class CommandBungee extends Command
         {
             try
             {
-                HttpsURLConnection connection = (HttpsURLConnection) new URL( "https://ci.simplyrin.net/job/HexaCord/lastStableBuild/buildNumber" ).openConnection();
+                HttpsURLConnection connection = (HttpsURLConnection) new URL( "https://ci.simplyrin.net/job/HexaCord-r/lastStableBuild/buildNumber" ).openConnection();
                 connection.addRequestProperty( "user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36" );
 
                 // 5 second timeout at various stages
@@ -89,9 +89,9 @@ public class CommandBungee extends Command
                     text.setHoverEvent( bungee.getHoverEvent() );
                     text.setClickEvent( bungee.getClickEvent() );
 
-                    TextComponent url = new TextComponent( ChatColor.GOLD + "https://ci.simplyrin.net/job/HexaCord/" );
+                    TextComponent url = new TextComponent( ChatColor.GOLD + "https://ci.simplyrin.net/job/HexaCord-r/" );
                     url.setHoverEvent( new HoverEvent( HoverEvent.Action.SHOW_TEXT, new Text( "Click to open" ) ) );
-                    url.setClickEvent( new ClickEvent( ClickEvent.Action.OPEN_URL, "https://ci.simplyrin.net/job/HexaCord/" ) );
+                    url.setClickEvent( new ClickEvent( ClickEvent.Action.OPEN_URL, "https://ci.simplyrin.net/job/HexaCord-r/" ) );
 
                     text.addExtra( url );
 
